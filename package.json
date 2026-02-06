@@ -1,7 +1,7 @@
 {
   "name": "reddit-dashboard",
   "version": "2.0.0",
-  "description": "Reddit Dashboard with Multi-User Airtable Integration",
+  "description": "Reddit Automation Dashboard with Multi-User Airtable Integration",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
