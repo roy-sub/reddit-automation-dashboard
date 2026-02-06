@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
 
-# Environment variables (IMPORTANT: Keep your secrets safe!)
+# Environment variables (IMPORTANT: Contains secrets!)
 .env
 .env.local
 .env.*.local
@@ -15,7 +15,6 @@ npm-debug.log*
 pids/
 *.pid
 *.seed
-*.pid.lock
 
 # OS files
 .DS_Store
