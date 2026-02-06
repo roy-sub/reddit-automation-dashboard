@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reddit Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16162a 100%);
+      min-height: 100vh;
+      color: #f8fafc;
+    }
+
+    /* Login Screen */
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-box {
+      background: linear-gradient(180deg, rgba(30, 30, 46, 0.9) 0%, rgba(24, 24, 37, 0.95) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 32px;
+      padding: 48px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
+    }
+
+    .login-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+      margin: 0 auto 20px;
+      box-shadow: 0 12px 32px rgba(255, 69, 0, 0.3);
+    }
+
+    .login-title {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .login-title h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .login-title p {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      color: #f8fafc;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    .error-message {
+      padding: 12px 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 10px;
+      color: #f87171;
+      font-size: 13px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Dashboard */
+    .dashboard {
+      display: none;
+    }
+
+    .header {
+      padding: 20px 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 15, 26, 0.8);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .header-info h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .header-info p {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-add {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-refresh {
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-refresh:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Tabs */
+    .tabs {
+      padding: 20px 32px;
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.3);
+      color: #818cf8;
+    }
+
+    .account-filter {
+      margin-left: auto;
+      padding: 10px 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #f8fafc;
+      font-size: 13px;
+      outline: none;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      height: calc(100vh - 145px);
+    }
+
+    .main-content.single-column {
+      grid-template-columns: 1fr;
+    }
+
+    /* Left Panel */
+    .left-panel {
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Subreddit Card */
+    .subreddit-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .subreddit-card:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .subreddit-card.selected {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.08) 100%);
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: scale(1.02);
+      box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .card-name {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .card-date {
+      font-size: 12px;
+      color: rgba(148, 163, 184, 0.8);
+      margin-top: 2px;
+    }
+
+    .card-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .stat-value.organic { color: #0ea5e9; }
+    .stat-value.marketing { color: #a855f7; }
+    .stat-value.total { color: #f8fafc; }
+
+    .stat-label {
+      font-size: 10px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
+
+    .status-dot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .dot.published { background: #22c55e; }
+    .dot.unpublished { background: #ef4444; }
+
+    /* Right Panel */
+    .right-panel {
+      padding: 24px 32px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .panel-header {
+      margin-bottom: 24px;
+    }
+
+    .panel-header h2 {
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .panel-header h2 span { color: #ff4500; }
+
+    .panel-header p {
+      color: #64748b;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .posts-header {
+      display: grid;
+      grid-template-columns: 1fr 120px 100px 110px;
+      gap: 16px;
+      padding: 12px 20px;
+      margin-bottom: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .post-row {
+      display: grid;
+      grid-template-columns: 1fr 120px 100px 110px;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      margin-bottom: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .post-row:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .post-link {
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .post-views {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .post-date {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    /* Badges */
+    .badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .badge.marketing {
+      background: rgba(168, 85, 247, 0.15);
+      color: #a855f7;
+    }
+
+    .badge.semi-marketing {
+      background: rgba(249, 115, 22, 0.15);
+      color: #f97316;
+    }
+
+    .badge.organic {
+      background: rgba(14, 165, 233, 0.15);
+      color: #0ea5e9;
+    }
+
+    .badge.published {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .badge.mod-review {
+      background: rgba(234, 179, 8, 0.15);
+      color: #eab308;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+
+    .badge.mod-removed {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #475569;
+    }
+
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 32px;
+    }
+
+    .empty-state p {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .empty-state span {
+      font-size: 13px;
+      color: #334155;
+    }
+
+    /* Non-Interacted Grid */
+    .non-interacted-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      padding: 24px 32px;
+    }
+
+    .non-interacted-card {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+    }
+
+    .non-interacted-card .card-icon {
+      background: rgba(100, 116, 139, 0.2);
+      color: #64748b;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: linear-gradient(180deg, #1e1e2e 0%, #181825 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 32px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      border-radius: 10px;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      color: #94a3b8;
+      font-size: 18px;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .modal-form select {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #f8fafc;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .modal-form input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #f8fafc;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .modal-form .btn-primary {
+      margin-top: 8px;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 48px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="loginScreen" class="login-container">
+    <div class="login-box">
+      <div class="login-title">
+        <div class="login-logo">r/</div>
+        <h1>Reddit Dashboard</h1>
+        <p>Sign in to continue</p>
+      </div>
+      
+      <div class="form-group">
+        <label>User ID</label>
+        <input type="text" id="loginId" placeholder="Enter your ID">
+      </div>
+      
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password">
+      </div>
+      
+      <div id="loginError" class="error-message"></div>
+      
+      <button id="loginBtn" class="btn-primary">Sign In</button>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="dashboard">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="header-logo">r/</div>
+        <div class="header-info">
+          <h1>Reddit Dashboard</h1>
+          <p><span id="statsInfo">0 active subreddits • 0 total posts</span></p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-add" onclick="openModal()">
+          <span style="font-size: 16px;">+</span> Add Post
+        </button>
+        <button class="btn-refresh" onclick="fetchData()">↻ Refresh</button>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button id="tabInteracted" class="tab-btn active" onclick="switchTab('interacted')">
+        Interacted Subreddits
+      </button>
+      <button id="tabNonInteracted" class="tab-btn" onclick="switchTab('non-interacted')">
+        Non-Interacted (<span id="nonInteractedCount">0</span>)
+      </button>
+      <select id="accountFilter" class="account-filter" style="display: none;" onchange="filterByAccount()">
+        <option value="all">All Accounts</option>
+      </select>
+    </div>
+
+    <!-- Main Content - Interacted -->
+    <div id="interactedContent" class="main-content">
+      <div class="left-panel" id="subredditList">
+        <div class="loading">Loading...</div>
+      </div>
+      <div class="right-panel" id="postDetails">
+        <div class="empty-state">
+          <div class="empty-icon">←</div>
+          <p>Select a subreddit</p>
+          <span>Click on a card to view posts</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content - Non-Interacted -->
+    <div id="nonInteractedContent" class="main-content single-column" style="display: none;">
+      <div class="non-interacted-grid" id="nonInteractedList">
+        <div class="loading">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Post Modal -->
+  <div id="addPostModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add New Post</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <form class="modal-form" onsubmit="addPost(event)">
+        <div class="form-group">
+          <label>Subreddit</label>
+          <input type="text" id="postSubreddit" placeholder="e.g., football" required>
+        </div>
+        <div class="form-group">
+          <label>Post URL</label>
+          <input type="url" id="postUrl" placeholder="https://reddit.com/r/..." required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="postCategory">
+              <option value="Marketing">Marketing</option>
+              <option value="Semi Marketing">Semi Marketing</option>
+              <option value="Organic">Organic</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="postStatus">
+              <option value="Published">Published</option>
+              <option value="Mod Review">Mod Review</option>
+              <option value="Mod Removed">Mod Removed</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Account ID</label>
+            <input type="text" id="postAccountId" placeholder="e.g., Misty0002" required>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="postDate" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Add Post</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let posts = [];
+    let allSubreddits = [];
+    let processedSubreddits = [];
+    let selectedSubreddit = null;
+    let currentTab = 'interacted';
+    let selectedAccount = 'all';
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set default date
+      document.getElementById('postDate').valueAsDate = new Date();
+      
+      // Enter key handlers
+      document.getElementById('loginId').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') login();
+      });
+      document.getElementById('loginPassword').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') login();
+      });
+      document.getElementById('loginBtn').addEventListener('click', login);
+    });
+
+    // Login
+    async function login() {
+      const id = document.getElementById('loginId').value;
+      const password = document.getElementById('loginPassword').value;
+      const errorEl = document.getElementById('loginError');
+      const btn = document.getElementById('loginBtn');
+
+      if (!id || !password) {
+        errorEl.textContent = 'Please enter both ID and Password';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+      errorEl.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('dashboard').style.display = 'block';
+          fetchData();
+        } else {
+          errorEl.textContent = data.message || 'Invalid ID or Password';
+          errorEl.style.display = 'block';
+        }
+      } catch (error) {
+        errorEl.textContent = 'Connection error. Please try again.';
+        errorEl.style.display = 'block';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    }
+
+    // Fetch data from API
+    async function fetchData() {
+      try {
+        // Fetch posts
+        const postsResponse = await fetch('/api/posts');
+        const postsData = await postsResponse.json();
+        
+        posts = (postsData.records || []).map(record => ({
+          id: record.id,
+          date: record.fields['Date'] || '',
+          accountId: record.fields['Account ID'] || '',
+          category: record.fields['Post Category'] || 'Marketing',
+          calculation: record.fields['Calculation'] || '',
+          postUrl: record.fields['Post URL'] || '',
+          status: record.fields['Status'] || 'Published',
+          views: record.fields['Views'] || ''
+        }));
+
+        // Fetch subreddits
+        const subsResponse = await fetch('/api/subreddits');
+        const subsData = await subsResponse.json();
+        
+        allSubreddits = (subsData.records || []).map(record => ({
+          id: record.id,
+          name: record.fields['Name'] || record.fields['Subreddit'] || '',
+          accountId: record.fields['Account ID'] || record.fields['User'] || ''
+        }));
+
+        processData();
+        renderDashboard();
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        document.getElementById('subredditList').innerHTML = `
+          <div class="loading" style="color: #f87171;">Error loading data. Please try again.</div>
+        `;
+      }
+    }
+
+    // Process posts into subreddit data
+    function processData() {
+      const subredditMap = {};
+      const accounts = new Set();
+
+      posts.forEach(post => {
+        const subName = extractSubreddit(post.calculation);
+        accounts.add(post.accountId);
+
+        if (!subredditMap[subName]) {
+          subredditMap[subName] = {
+            name: subName,
+            lastInteraction: post.date,
+            organic: 0,
+            marketing: 0,
+            total: 0,
+            published: 0,
+            unpublished: 0,
+            posts: []
+          };
+        }
+
+        const sub = subredditMap[subName];
+        sub.posts.push(post);
+        sub.total++;
+
+        if (new Date(post.date) > new Date(sub.lastInteraction)) {
+          sub.lastInteraction = post.date;
+        }
+
+        if (post.category === 'Organic') sub.organic++;
+        else sub.marketing++;
+
+        if (post.status === 'Published') sub.published++;
+        else sub.unpublished++;
+      });
+
+      // Sort by last interaction
+      processedSubreddits = Object.values(subredditMap).sort(
+        (a, b) => new Date(b.lastInteraction) - new Date(a.lastInteraction)
+      );
+
+      // Sort posts within each subreddit
+      processedSubreddits.forEach(sub => {
+        sub.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+      });
+
+      // Update account filter
+      const accountFilter = document.getElementById('accountFilter');
+      accountFilter.innerHTML = '<option value="all">All Accounts</option>';
+      accounts.forEach(acc => {
+        if (acc) {
+          accountFilter.innerHTML += `<option value="${acc}">${acc}</option>`;
+        }
+      });
+    }
+
+    // Extract subreddit name from URL
+    function extractSubreddit(url) {
+      if (!url) return 'Unknown';
+      const match = url.match(/reddit\.com\/r\/([^\/\s]+)/i);
+      return match ? match[1] : url.replace('/r/', '').replace('/', '');
+    }
+
+    // Format date
+    function formatDate(dateStr) {
+      if (!dateStr) return 'N/A';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    // Render dashboard
+    function renderDashboard() {
+      // Update stats
+      document.getElementById('statsInfo').textContent = 
+        `${processedSubreddits.length} active subreddits • ${posts.length} total posts`;
+
+      // Render subreddit cards
+      renderSubredditCards();
+      
+      // Update non-interacted count
+      updateNonInteractedCount();
+    }
+
+    // Render subreddit cards
+    function renderSubredditCards() {
+      const container = document.getElementById('subredditList');
+      
+      if (processedSubreddits.length === 0) {
+        container.innerHTML = '<div class="loading">No posts found</div>';
+        return;
+      }
+
+      container.innerHTML = processedSubreddits.map(sub => `
+        <div class="subreddit-card ${selectedSubreddit?.name === sub.name ? 'selected' : ''}" 
+             onclick="selectSubreddit('${sub.name}')">
+          <div class="card-header">
+            <div class="card-icon">r/</div>
+            <div>
+              <div class="card-name">${sub.name}</div>
+              <div class="card-date">Last: ${formatDate(sub.lastInteraction)}</div>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat">
+              <div class="stat-value organic">${sub.organic}</div>
+              <div class="stat-label">Organic</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value marketing">${sub.marketing}</div>
+              <div class="stat-label">Marketing</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value total">${sub.total}</div>
+              <div class="stat-label">Total</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="status-dot">
+              <div class="dot published"></div>
+              <span>${sub.published} published</span>
+            </div>
+            <div class="status-dot">
+              <div class="dot unpublished"></div>
+              <span>${sub.unpublished} unpub</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Select subreddit
+    function selectSubreddit(name) {
+      selectedSubreddit = processedSubreddits.find(s => s.name === name);
+      renderSubredditCards();
+      renderPostDetails();
+    }
+
+    // Render post details
+    function renderPostDetails() {
+      const container = document.getElementById('postDetails');
+      
+      if (!selectedSubreddit) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">←</div>
+            <p>Select a subreddit</p>
+            <span>Click on a card to view posts</span>
+          </div>
+        `;
+        return;
+      }
+
+      const getCategoryClass = (cat) => {
+        if (cat === 'Organic') return 'organic';
+        if (cat === 'Semi Marketing') return 'semi-marketing';
+        return 'marketing';
+      };
+
+      const getStatusClass = (status) => {
+        if (status === 'Published') return 'published';
+        if (status === 'Mod Removed') return 'mod-removed';
+        return 'mod-review';
+      };
+
+      container.innerHTML = `
+        <div class="panel-header">
+          <h2><span>r/</span>${selectedSubreddit.name}</h2>
+          <p>${selectedSubreddit.total} posts • Last active ${formatDate(selectedSubreddit.lastInteraction)}</p>
+        </div>
+        <div class="posts-header">
+          <div>Post Link</div>
+          <div>Category</div>
+          <div>Date</div>
+          <div>Status</div>
+        </div>
+        <div class="posts-list">
+          ${selectedSubreddit.posts.map(post => `
+            <div class="post-row">
+              <div>
+                <a href="${post.postUrl}" target="_blank" class="post-link">${post.postUrl || 'No URL'}</a>
+                ${post.views ? `<div class="post-views">${post.views} views</div>` : ''}
+              </div>
+              <span class="badge ${getCategoryClass(post.category)}">${post.category}</span>
+              <span class="post-date">${formatDate(post.date)}</span>
+              <span class="badge ${getStatusClass(post.status)}">${post.status}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Switch tabs
+    function switchTab(tab) {
+      currentTab = tab;
+      
+      document.getElementById('tabInteracted').classList.toggle('active', tab === 'interacted');
+      document.getElementById('tabNonInteracted').classList.toggle('active', tab === 'non-interacted');
+      
+      document.getElementById('interactedContent').style.display = tab === 'interacted' ? 'grid' : 'none';
+      document.getElementById('nonInteractedContent').style.display = tab === 'non-interacted' ? 'grid' : 'none';
+      document.getElementById('accountFilter').style.display = tab === 'non-interacted' ? 'block' : 'none';
+      
+      if (tab === 'non-interacted') {
+        renderNonInteracted();
+      }
+    }
+
+    // Update non-interacted count
+    function updateNonInteractedCount() {
+      const interactedNames = new Set(processedSubreddits.map(s => s.name.toLowerCase()));
+      const nonInteracted = allSubreddits.filter(s => !interactedNames.has((s.name || '').toLowerCase()));
+      document.getElementById('nonInteractedCount').textContent = nonInteracted.length;
+    }
+
+    // Render non-interacted subreddits
+    function renderNonInteracted() {
+      const container = document.getElementById('nonInteractedList');
+      const interactedNames = new Set(processedSubreddits.map(s => s.name.toLowerCase()));
+      
+      let nonInteracted = allSubreddits.filter(s => {
+        const name = (s.name || '').toLowerCase();
+        const matchesAccount = selectedAccount === 'all' || s.accountId === selectedAccount;
+        return !interactedNames.has(name) && matchesAccount;
+      });
+
+      if (nonInteracted.length === 0) {
+        container.innerHTML = `
+          <div class="loading" style="grid-column: 1 / -1;">
+            ${allSubreddits.length === 0 
+              ? 'No subreddits found in your Subreddits table' 
+              : 'All subreddits have been interacted with!'}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = nonInteracted.map(sub => `
+        <div class="non-interacted-card">
+          <div class="card-header">
+            <div class="card-icon">r/</div>
+            <div>
+              <div class="card-name">${sub.name}</div>
+              ${sub.accountId ? `<div class="card-date">${sub.accountId}</div>` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Filter by account
+    function filterByAccount() {
+      selectedAccount = document.getElementById('accountFilter').value;
+      renderNonInteracted();
+    }
+
+    // Modal functions
+    function openModal() {
+      document.getElementById('addPostModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('addPostModal').classList.remove('active');
+    }
+
+    // Add post
+    async function addPost(event) {
+      event.preventDefault();
+      
+      const subreddit = document.getElementById('postSubreddit').value;
+      const postUrl = document.getElementById('postUrl').value;
+      const category = document.getElementById('postCategory').value;
+      const status = document.getElementById('postStatus').value;
+      const accountId = document.getElementById('postAccountId').value;
+      const date = document.getElementById('postDate').value;
+
+      try {
+        const response = await fetch('/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            'Date': date,
+            'Account ID': accountId,
+            'Post Category': category,
+            'Calculation': `https://www.reddit.com/r/${subreddit.replace('/r/', '').replace('r/', '')}`,
+            'Post URL': postUrl,
+            'Status': status
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.error) {
+          alert('Error: ' + data.error.message);
+        } else {
+          closeModal();
+          // Reset form
+          document.getElementById('postSubreddit').value = '';
+          document.getElementById('postUrl').value = '';
+          document.getElementById('postAccountId').value = '';
+          // Refresh data
+          fetchData();
+        }
+      } catch (error) {
+        alert('Error adding post: ' + error.message);
+      }
+    }
+  </script>
+</body>
+</html>
