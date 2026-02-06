@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Reddit Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -17,6 +17,77 @@
       background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16162a 100%);
       min-height: 100vh;
       color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16162a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .loading-overlay.hidden {
+      display: none;
+    }
+
+    .spinner {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent, #6366f1, #8b5cf6, #a855f7, transparent);
+      animation: spin 1s linear infinite;
+      position: relative;
+    }
+
+    .spinner::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background: #1a1a2e;
+      border-radius: 50%;
+    }
+
+    .spinner::after {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(0.8); opacity: 0.5; }
+      50% { transform: scale(1); opacity: 1; }
+    }
+
+    .loading-text {
+      margin-top: 24px;
+      font-size: 14px;
+      color: #94a3b8;
+      letter-spacing: 1px;
+    }
+
+    .loading-dots::after {
+      content: '';
+      animation: dots 1.5s infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { content: ''; }
+      40% { content: '.'; }
+      60% { content: '..'; }
+      80%, 100% { content: '...'; }
     }
 
     /* Login Screen */
@@ -36,6 +107,13 @@
       width: 100%;
       max-width: 400px;
       box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
+    }
+
+    @media (max-width: 480px) {
+      .login-box {
+        padding: 32px 24px;
+        border-radius: 24px;
+      }
     }
 
     .login-logo {
@@ -143,7 +221,7 @@
     }
 
     .header {
-      padding: 20px 32px;
+      padding: 16px 24px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       display: flex;
       align-items: center;
@@ -153,45 +231,83 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 12px 16px;
+      }
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
 
     .header-logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 800;
       color: white;
+      flex-shrink: 0;
     }
 
     .header-info h1 {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 480px) {
+      .header-info h1 {
+        font-size: 16px;
+      }
+    }
+
+    .user-badge {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
     }
 
     .header-info p {
-      font-size: 12px;
+      font-size: 11px;
       color: #64748b;
+      margin-top: 2px;
     }
 
     .header-actions {
       display: flex;
-      gap: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 480px) {
+      .header-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
     }
 
     .btn-add {
-      padding: 10px 20px;
+      padding: 10px 16px;
       background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
       border: none;
       border-radius: 10px;
@@ -205,7 +321,7 @@
     }
 
     .btn-refresh {
-      padding: 10px 16px;
+      padding: 10px 14px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 10px;
@@ -221,14 +337,22 @@
 
     /* Tabs */
     .tabs {
-      padding: 20px 32px;
+      padding: 16px 24px;
       display: flex;
       gap: 8px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .tabs {
+        padding: 12px 16px;
+      }
     }
 
     .tab-btn {
-      padding: 10px 20px;
+      padding: 10px 16px;
       background: transparent;
       border: 1px solid transparent;
       border-radius: 10px;
@@ -237,6 +361,14 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 480px) {
+      .tab-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
     }
 
     .tab-btn.active {
@@ -245,22 +377,160 @@
       color: #818cf8;
     }
 
-    .account-filter {
-      margin-left: auto;
+    .btn-summarize {
       padding: 10px 16px;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.15));
+      border: 1px solid rgba(34, 197, 94, 0.3);
       border-radius: 10px;
+      color: #22c55e;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      margin-left: auto;
+    }
+
+    .btn-summarize:hover {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(16, 185, 129, 0.25));
+    }
+
+    @media (max-width: 600px) {
+      .btn-summarize {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+      }
+    }
+
+    /* Custom Dropdown */
+    .custom-dropdown {
+      position: relative;
+    }
+
+    .dropdown-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, rgba(30, 30, 46, 0.9), rgba(24, 24, 37, 0.95));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
       color: #f8fafc;
       font-size: 13px;
-      outline: none;
+      font-weight: 500;
+      cursor: pointer;
+      min-width: 160px;
+      transition: all 0.2s ease;
+    }
+
+    @media (max-width: 480px) {
+      .dropdown-trigger {
+        min-width: 140px;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+    }
+
+    .dropdown-trigger:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      background: linear-gradient(135deg, rgba(40, 40, 60, 0.9), rgba(30, 30, 45, 0.95));
+    }
+
+    .dropdown-trigger .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .dropdown-trigger .arrow {
+      margin-left: auto;
+      transition: transform 0.2s ease;
+    }
+
+    .dropdown-trigger.open .arrow {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 100%;
+      background: linear-gradient(180deg, #252538 0%, #1e1e2e 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 8px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+
+    .dropdown-menu.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(99, 102, 241, 0.15);
+    }
+
+    .dropdown-item.selected {
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+    }
+
+    .dropdown-item .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: white;
     }
 
     /* Main Content */
     .main-content {
       display: grid;
-      grid-template-columns: 380px 1fr;
-      height: calc(100vh - 145px);
+      grid-template-columns: 340px 1fr;
+      height: calc(100vh - 140px);
+    }
+
+    @media (max-width: 900px) {
+      .main-content {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
     }
 
     .main-content.single-column {
@@ -270,19 +540,34 @@
     /* Left Panel */
     .left-panel {
       border-right: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 24px;
+      padding: 20px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .left-panel {
+        max-height: 50vh;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .left-panel {
+        padding: 16px;
+        gap: 12px;
+      }
     }
 
     /* Subreddit Card */
     .subreddit-card {
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 14px;
+      padding: 16px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -303,30 +588,31 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .card-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
       background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 14px;
       font-weight: 700;
       color: white;
+      flex-shrink: 0;
     }
 
     .card-name {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       letter-spacing: -0.3px;
     }
 
     .card-date {
-      font-size: 12px;
+      font-size: 11px;
       color: rgba(148, 163, 184, 0.8);
       margin-top: 2px;
     }
@@ -334,8 +620,8 @@
     .card-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      padding-top: 16px;
+      gap: 10px;
+      padding-top: 14px;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
@@ -344,7 +630,7 @@
     }
 
     .stat-value {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
     }
 
@@ -353,7 +639,7 @@
     .stat-value.total { color: #f8fafc; }
 
     .stat-label {
-      font-size: 10px;
+      font-size: 9px;
       color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -363,79 +649,194 @@
       display: flex;
       justify-content: space-between;
       margin-top: 12px;
-      padding: 10px 14px;
+      padding: 8px 12px;
       background: rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
+      border-radius: 8px;
     }
 
     .status-dot {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
+      gap: 5px;
+      font-size: 11px;
       color: #94a3b8;
     }
 
     .dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
     }
 
-    .dot.published { background: #22c55e; }
-    .dot.unpublished { background: #ef4444; }
+    .dot.live { background: #22c55e; }
+    .dot.removed { background: #ef4444; }
 
     /* Right Panel */
     .right-panel {
-      padding: 24px 32px;
+      padding: 20px 24px;
       overflow-y: auto;
       background: rgba(0, 0, 0, 0.1);
     }
 
+    @media (max-width: 900px) {
+      .right-panel {
+        min-height: 50vh;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .right-panel {
+        padding: 16px;
+      }
+    }
+
     .panel-header {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .panel-header h2 {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .panel-header h2 {
+        font-size: 18px;
+      }
     }
 
     .panel-header h2 span { color: #ff4500; }
 
     .panel-header p {
       color: #64748b;
-      font-size: 14px;
-      margin-top: 8px;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    /* Filters Section */
+    .filters-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    @media (max-width: 480px) {
+      .filter-group {
+        min-width: 100%;
+      }
+    }
+
+    .filter-label {
+      font-size: 9px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .filter-select {
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #f8fafc;
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .filter-select:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .filter-input {
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #f8fafc;
+      font-size: 12px;
+      outline: none;
+      width: 100%;
+    }
+
+    .filter-btn {
+      padding: 8px 14px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 8px;
+      color: #818cf8;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      align-self: flex-end;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      background: rgba(99, 102, 241, 0.25);
+    }
+
+    .filter-btn.reset {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #f87171;
     }
 
     .posts-header {
       display: grid;
-      grid-template-columns: 1fr 120px 100px 110px;
-      gap: 16px;
-      padding: 12px 20px;
-      margin-bottom: 12px;
-      font-size: 11px;
+      grid-template-columns: 80px 1fr 90px 90px 100px;
+      gap: 12px;
+      padding: 10px 16px;
+      margin-bottom: 10px;
+      font-size: 10px;
       font-weight: 600;
       color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
+    @media (max-width: 700px) {
+      .posts-header {
+        display: none;
+      }
+    }
+
     .post-row {
       display: grid;
-      grid-template-columns: 1fr 120px 100px 110px;
-      gap: 16px;
+      grid-template-columns: 80px 1fr 90px 90px 100px;
+      gap: 12px;
       align-items: center;
-      padding: 16px 20px;
+      padding: 14px 16px;
       background: rgba(255, 255, 255, 0.02);
-      border-radius: 12px;
+      border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.04);
       margin-bottom: 8px;
       transition: all 0.2s ease;
+    }
+
+    @media (max-width: 700px) {
+      .post-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
     }
 
     .post-row:hover {
@@ -443,34 +844,65 @@
       border-color: rgba(255, 255, 255, 0.08);
     }
 
-    .post-link {
-      color: #60a5fa;
+    .redirect-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 12px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 8px;
+      color: #a5b4fc;
+      font-size: 11px;
+      font-weight: 600;
       text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .redirect-btn:hover {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3));
+      transform: translateY(-1px);
+    }
+
+    .redirect-btn svg {
+      width: 12px;
+      height: 12px;
     }
 
     .post-views {
-      font-size: 11px;
-      color: #64748b;
-      margin-top: 4px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 700px) {
+      .post-views::before {
+        content: 'Views: ';
+        color: #64748b;
+      }
     }
 
     .post-date {
-      font-size: 13px;
+      font-size: 12px;
       color: #94a3b8;
+    }
+
+    @media (max-width: 700px) {
+      .post-date::before {
+        content: 'Date: ';
+        color: #64748b;
+      }
     }
 
     /* Badges */
     .badge {
-      padding: 4px 10px;
+      padding: 4px 8px;
       border-radius: 6px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
     .badge.marketing {
@@ -488,7 +920,7 @@
       color: #0ea5e9;
     }
 
-    .badge.published {
+    .badge.live {
       background: rgba(34, 197, 94, 0.15);
       color: #22c55e;
       border: 1px solid rgba(34, 197, 94, 0.3);
@@ -509,6 +941,7 @@
     /* Empty State */
     .empty-state {
       height: 100%;
+      min-height: 300px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -517,45 +950,101 @@
     }
 
     .empty-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: 20px;
+      width: 70px;
+      height: 70px;
+      border-radius: 18px;
       background: rgba(255, 255, 255, 0.03);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
-      font-size: 32px;
+      margin-bottom: 16px;
+      font-size: 28px;
     }
 
     .empty-state p {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 500;
     }
 
     .empty-state span {
-      font-size: 13px;
+      font-size: 12px;
       color: #334155;
     }
 
     /* Non-Interacted Grid */
+    .non-interacted-container {
+      padding: 20px 24px;
+      overflow-y: auto;
+      height: calc(100vh - 140px);
+    }
+
+    @media (max-width: 480px) {
+      .non-interacted-container {
+        padding: 16px;
+      }
+    }
+
     .non-interacted-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-      padding: 24px 32px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 480px) {
+      .non-interacted-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+      }
     }
 
     .non-interacted-card {
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.02);
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
       border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
+      border-radius: 14px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .non-interacted-card:hover {
+      background: linear-gradient(135deg, rgba(255, 69, 0, 0.08) 0%, rgba(255, 107, 53, 0.04) 100%);
+      border-color: rgba(255, 69, 0, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(255, 69, 0, 0.15), 0 0 20px rgba(255, 69, 0, 0.1);
+    }
+
+    .non-interacted-card:hover .card-icon {
+      background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
+      border-color: transparent;
+      box-shadow: 0 4px 16px rgba(255, 69, 0, 0.3);
+    }
+
+    .non-interacted-card:hover .sub-name {
+      color: #ff6b35;
     }
 
     .non-interacted-card .card-icon {
-      background: rgba(100, 116, 139, 0.2);
-      color: #64748b;
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      font-size: 12px;
+      background: linear-gradient(135deg, rgba(100, 116, 139, 0.3), rgba(71, 85, 105, 0.3));
+      border: 1px solid rgba(100, 116, 139, 0.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .non-interacted-card .sub-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e2e8f0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.3s ease;
     }
 
     /* Modal */
@@ -568,6 +1057,7 @@
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      padding: 20px;
     }
 
     .modal-overlay.active {
@@ -578,21 +1068,30 @@
       background: linear-gradient(180deg, #1e1e2e 0%, #181825 100%);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 24px;
-      padding: 32px;
+      padding: 28px;
       width: 100%;
       max-width: 480px;
       box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 480px) {
+      .modal {
+        padding: 20px;
+        border-radius: 20px;
+      }
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .modal-header h2 {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
     }
 
@@ -610,7 +1109,7 @@
     .modal-form {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
     .form-row {
@@ -619,9 +1118,15 @@
       gap: 12px;
     }
 
+    @media (max-width: 400px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .modal-form select {
       width: 100%;
-      padding: 12px 16px;
+      padding: 12px 14px;
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 10px;
@@ -632,7 +1137,7 @@
 
     .modal-form input {
       width: 100%;
-      padding: 12px 16px;
+      padding: 12px 14px;
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 10px;
@@ -645,15 +1150,96 @@
       margin-top: 8px;
     }
 
+    /* Summary Modal Styles */
+    .summary-content {
+      padding: 10px 0;
+    }
+
+    .summary-section {
+      margin-bottom: 20px;
+    }
+
+    .summary-section-title {
+      font-size: 12px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .summary-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .summary-card.highlight {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+      border-color: rgba(99, 102, 241, 0.2);
+    }
+
+    .summary-value {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .summary-value.total { color: #f8fafc; }
+    .summary-value.live { color: #22c55e; }
+    .summary-value.removed { color: #ef4444; }
+    .summary-value.marketing { color: #a855f7; }
+    .summary-value.organic { color: #0ea5e9; }
+    .summary-value.review { color: #eab308; }
+
+    .summary-label {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
     /* Loading */
     .loading {
       text-align: center;
-      padding: 48px;
+      padding: 40px;
       color: #64748b;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.3);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.5);
     }
   </style>
 </head>
 <body>
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading<span class="loading-dots"></span></div>
+  </div>
+
   <!-- Login Screen -->
   <div id="loginScreen" class="login-container">
     <div class="login-box">
@@ -686,7 +1272,10 @@
       <div class="header-left">
         <div class="header-logo">r/</div>
         <div class="header-info">
-          <h1>Reddit Dashboard</h1>
+          <h1>
+            Reddit Dashboard
+            <span id="userBadge" class="user-badge"></span>
+          </h1>
           <p><span id="statsInfo">0 active subreddits • 0 total posts</span></p>
         </div>
       </div>
@@ -706,9 +1295,29 @@
       <button id="tabNonInteracted" class="tab-btn" onclick="switchTab('non-interacted')">
         Non-Interacted (<span id="nonInteractedCount">0</span>)
       </button>
-      <select id="accountFilter" class="account-filter" style="display: none;" onchange="filterByAccount()">
-        <option value="all">All Accounts</option>
-      </select>
+      
+      <!-- Summarize Button -->
+      <button class="btn-summarize" onclick="openSummaryModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+          <path d="M21 5c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+          <ellipse cx="12" cy="5" rx="9" ry="3"/>
+        </svg>
+        Summarize
+      </button>
+      
+      <!-- Custom Account Dropdown (for Non-Interacted tab) -->
+      <div id="accountDropdown" class="custom-dropdown" style="display: none;">
+        <div class="dropdown-trigger" onclick="toggleDropdown()">
+          <div class="avatar" id="dropdownAvatar">M</div>
+          <span id="dropdownLabel">Misty0002</span>
+          <svg class="arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu"></div>
+      </div>
     </div>
 
     <!-- Main Content - Interacted -->
@@ -727,8 +1336,10 @@
 
     <!-- Main Content - Non-Interacted -->
     <div id="nonInteractedContent" class="main-content single-column" style="display: none;">
-      <div class="non-interacted-grid" id="nonInteractedList">
-        <div class="loading">Loading...</div>
+      <div class="non-interacted-container">
+        <div class="non-interacted-grid" id="nonInteractedList">
+          <div class="loading">Loading...</div>
+        </div>
       </div>
     </div>
   </div>
@@ -782,6 +1393,19 @@
     </div>
   </div>
 
+  <!-- Summary Modal -->
+  <div id="summaryModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Engagement Summary</h2>
+        <button class="modal-close" onclick="closeSummaryModal()">✕</button>
+      </div>
+      <div class="summary-content" id="summaryContent">
+        <!-- Content will be dynamically inserted -->
+      </div>
+    </div>
+  </div>
+
   <script>
     // State
     let posts = [];
@@ -789,10 +1413,31 @@
     let processedSubreddits = [];
     let selectedSubreddit = null;
     let currentTab = 'interacted';
-    let selectedAccount = 'all';
+    let selectedAccount = 'Misty0002';
+    let accounts = [];
+    let currentUserId = '';
+    
+    // Filters state
+    let filters = {
+      category: 'all',
+      status: 'all',
+      dateFrom: '',
+      dateTo: '',
+      sortBy: 'newest'
+    };
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
+      // Check for existing session
+      const savedSession = sessionStorage.getItem('redditDashboardSession');
+      if (savedSession) {
+        const session = JSON.parse(savedSession);
+        currentUserId = session.userId;
+        showDashboard();
+        showLoading();
+        fetchData();
+      }
+      
       // Set default date
       document.getElementById('postDate').valueAsDate = new Date();
       
@@ -804,7 +1449,32 @@
         if (e.key === 'Enter') login();
       });
       document.getElementById('loginBtn').addEventListener('click', login);
+      
+      // Close dropdown on outside click
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-dropdown')) {
+          document.querySelector('.dropdown-trigger')?.classList.remove('open');
+          document.getElementById('dropdownMenu')?.classList.remove('open');
+        }
+      });
     });
+
+    // Show loading overlay
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+    }
+
+    // Hide loading overlay
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+    }
+
+    // Show dashboard
+    function showDashboard() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      document.getElementById('userBadge').textContent = currentUserId;
+    }
 
     // Login
     async function login() {
@@ -833,8 +1503,11 @@
         const data = await response.json();
 
         if (data.success) {
-          document.getElementById('loginScreen').style.display = 'none';
-          document.getElementById('dashboard').style.display = 'block';
+          currentUserId = id;
+          // Save session
+          sessionStorage.setItem('redditDashboardSession', JSON.stringify({ userId: id }));
+          showDashboard();
+          showLoading();
           fetchData();
         } else {
           errorEl.textContent = data.message || 'Invalid ID or Password';
@@ -851,6 +1524,7 @@
 
     // Fetch data from API
     async function fetchData() {
+      showLoading();
       try {
         // Fetch posts
         const postsResponse = await fetch('/api/posts');
@@ -861,7 +1535,7 @@
           date: record.fields['Date'] || '',
           accountId: record.fields['Account ID'] || '',
           category: record.fields['Post Category'] || 'Marketing',
-          calculation: record.fields['Calculation'] || '',
+          subreddit: record.fields['Subreddit'] || '',
           postUrl: record.fields['Post URL'] || '',
           status: record.fields['Status'] || 'Published',
           views: record.fields['Views'] || ''
@@ -873,7 +1547,8 @@
         
         allSubreddits = (subsData.records || []).map(record => ({
           id: record.id,
-          name: record.fields['Name'] || record.fields['Subreddit'] || '',
+          subreddit: record.fields['Subreddit'] || '',
+          name: extractSubreddit(record.fields['Subreddit'] || ''),
           accountId: record.fields['Account ID'] || record.fields['User'] || ''
         }));
 
@@ -884,17 +1559,19 @@
         document.getElementById('subredditList').innerHTML = `
           <div class="loading" style="color: #f87171;">Error loading data. Please try again.</div>
         `;
+      } finally {
+        hideLoading();
       }
     }
 
     // Process posts into subreddit data
     function processData() {
       const subredditMap = {};
-      const accounts = new Set();
+      const accountSet = new Set();
 
       posts.forEach(post => {
-        const subName = extractSubreddit(post.calculation);
-        accounts.add(post.accountId);
+        const subName = extractSubreddit(post.subreddit);
+        accountSet.add(post.accountId);
 
         if (!subredditMap[subName]) {
           subredditMap[subName] = {
@@ -903,8 +1580,9 @@
             organic: 0,
             marketing: 0,
             total: 0,
-            published: 0,
-            unpublished: 0,
+            live: 0,
+            modRemoved: 0,
+            modReview: 0,
             posts: []
           };
         }
@@ -920,8 +1598,9 @@
         if (post.category === 'Organic') sub.organic++;
         else sub.marketing++;
 
-        if (post.status === 'Published') sub.published++;
-        else sub.unpublished++;
+        if (post.status === 'Published') sub.live++;
+        else if (post.status === 'Mod Removed') sub.modRemoved++;
+        else sub.modReview++;
       });
 
       // Sort by last interaction
@@ -934,21 +1613,58 @@
         sub.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
       });
 
-      // Update account filter
-      const accountFilter = document.getElementById('accountFilter');
-      accountFilter.innerHTML = '<option value="all">All Accounts</option>';
-      accounts.forEach(acc => {
-        if (acc) {
-          accountFilter.innerHTML += `<option value="${acc}">${acc}</option>`;
-        }
-      });
+      // Update accounts list
+      accounts = Array.from(accountSet).filter(a => a);
+      if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
+        selectedAccount = accounts[0];
+      }
+      
+      // Build dropdown
+      buildAccountDropdown();
+    }
+
+    // Build account dropdown
+    function buildAccountDropdown() {
+      const menu = document.getElementById('dropdownMenu');
+      menu.innerHTML = accounts.map(acc => `
+        <div class="dropdown-item ${acc === selectedAccount ? 'selected' : ''}" onclick="selectAccount('${acc}')">
+          <div class="avatar">${acc.charAt(0).toUpperCase()}</div>
+          <span>${acc}</span>
+        </div>
+      `).join('');
+      
+      // Update trigger
+      updateDropdownTrigger();
+    }
+
+    // Update dropdown trigger display
+    function updateDropdownTrigger() {
+      document.getElementById('dropdownAvatar').textContent = selectedAccount.charAt(0).toUpperCase();
+      document.getElementById('dropdownLabel').textContent = selectedAccount;
+    }
+
+    // Toggle dropdown
+    function toggleDropdown() {
+      const trigger = document.querySelector('.dropdown-trigger');
+      const menu = document.getElementById('dropdownMenu');
+      trigger.classList.toggle('open');
+      menu.classList.toggle('open');
+    }
+
+    // Select account
+    function selectAccount(account) {
+      selectedAccount = account;
+      updateDropdownTrigger();
+      buildAccountDropdown();
+      toggleDropdown();
+      renderNonInteracted();
     }
 
     // Extract subreddit name from URL
     function extractSubreddit(url) {
       if (!url) return 'Unknown';
       const match = url.match(/reddit\.com\/r\/([^\/\s]+)/i);
-      return match ? match[1] : url.replace('/r/', '').replace('/', '');
+      return match ? match[1] : url.replace('/r/', '').replace('/', '').replace('https://www.reddit.com/r/', '');
     }
 
     // Format date
@@ -982,7 +1698,7 @@
 
       container.innerHTML = processedSubreddits.map(sub => `
         <div class="subreddit-card ${selectedSubreddit?.name === sub.name ? 'selected' : ''}" 
-             onclick="selectSubreddit('${sub.name}')">
+             onclick="toggleSubreddit('${sub.name}')">
           <div class="card-header">
             <div class="card-icon">r/</div>
             <div>
@@ -1006,22 +1722,94 @@
           </div>
           <div class="card-footer">
             <div class="status-dot">
-              <div class="dot published"></div>
-              <span>${sub.published} published</span>
+              <div class="dot live"></div>
+              <span>${sub.live} Live</span>
             </div>
             <div class="status-dot">
-              <div class="dot unpublished"></div>
-              <span>${sub.unpublished} unpub</span>
+              <div class="dot removed"></div>
+              <span>${sub.modRemoved} Mod Removed</span>
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    // Select subreddit
-    function selectSubreddit(name) {
-      selectedSubreddit = processedSubreddits.find(s => s.name === name);
+    // Toggle subreddit selection (select/deselect)
+    function toggleSubreddit(name) {
+      if (selectedSubreddit?.name === name) {
+        // Deselect
+        selectedSubreddit = null;
+      } else {
+        // Select
+        selectedSubreddit = processedSubreddits.find(s => s.name === name);
+        // Reset filters when selecting new subreddit
+        filters = { category: 'all', status: 'all', dateFrom: '', dateTo: '', sortBy: 'newest' };
+      }
       renderSubredditCards();
+      renderPostDetails();
+    }
+
+    // Apply filters to posts
+    function getFilteredPosts() {
+      if (!selectedSubreddit) return [];
+      
+      let filtered = [...selectedSubreddit.posts];
+      
+      // Category filter
+      if (filters.category !== 'all') {
+        filtered = filtered.filter(p => p.category === filters.category);
+      }
+      
+      // Status filter
+      if (filters.status !== 'all') {
+        filtered = filtered.filter(p => p.status === filters.status);
+      }
+      
+      // Date from filter
+      if (filters.dateFrom) {
+        filtered = filtered.filter(p => new Date(p.date) >= new Date(filters.dateFrom));
+      }
+      
+      // Date to filter
+      if (filters.dateTo) {
+        filtered = filtered.filter(p => new Date(p.date) <= new Date(filters.dateTo));
+      }
+      
+      // Sort
+      if (filters.sortBy === 'newest') {
+        filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+      } else if (filters.sortBy === 'oldest') {
+        filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+      } else if (filters.sortBy === 'views') {
+        filtered.sort((a, b) => {
+          const viewsA = parseViews(a.views);
+          const viewsB = parseViews(b.views);
+          return viewsB - viewsA;
+        });
+      }
+      
+      return filtered;
+    }
+
+    // Parse views string to number
+    function parseViews(views) {
+      if (!views) return 0;
+      const str = String(views).toLowerCase().replace(/[^0-9.k+]/g, '');
+      if (str.includes('k')) {
+        return parseFloat(str) * 1000;
+      }
+      return parseFloat(str) || 0;
+    }
+
+    // Handle filter change
+    function handleFilterChange(filterType, value) {
+      filters[filterType] = value;
+      renderPostDetails();
+    }
+
+    // Reset filters
+    function resetFilters() {
+      filters = { category: 'all', status: 'all', dateFrom: '', dateTo: '', sortBy: 'newest' };
       renderPostDetails();
     }
 
@@ -1040,6 +1828,8 @@
         return;
       }
 
+      const filteredPosts = getFilteredPosts();
+
       const getCategoryClass = (cat) => {
         if (cat === 'Organic') return 'organic';
         if (cat === 'Semi Marketing') return 'semi-marketing';
@@ -1047,9 +1837,15 @@
       };
 
       const getStatusClass = (status) => {
-        if (status === 'Published') return 'published';
+        if (status === 'Published') return 'live';
         if (status === 'Mod Removed') return 'mod-removed';
         return 'mod-review';
+      };
+
+      const getStatusLabel = (status) => {
+        if (status === 'Published') return 'Live';
+        if (status === 'Mod Removed') return 'Mod Removed';
+        return 'Mod Review';
       };
 
       container.innerHTML = `
@@ -1057,22 +1853,68 @@
           <h2><span>r/</span>${selectedSubreddit.name}</h2>
           <p>${selectedSubreddit.total} posts • Last active ${formatDate(selectedSubreddit.lastInteraction)}</p>
         </div>
+        
+        <!-- Filters -->
+        <div class="filters-section">
+          <div class="filter-group">
+            <span class="filter-label">Category</span>
+            <select class="filter-select" onchange="handleFilterChange('category', this.value)">
+              <option value="all" ${filters.category === 'all' ? 'selected' : ''}>All Categories</option>
+              <option value="Marketing" ${filters.category === 'Marketing' ? 'selected' : ''}>Marketing</option>
+              <option value="Semi Marketing" ${filters.category === 'Semi Marketing' ? 'selected' : ''}>Semi Marketing</option>
+              <option value="Organic" ${filters.category === 'Organic' ? 'selected' : ''}>Organic</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Status</span>
+            <select class="filter-select" onchange="handleFilterChange('status', this.value)">
+              <option value="all" ${filters.status === 'all' ? 'selected' : ''}>All Status</option>
+              <option value="Published" ${filters.status === 'Published' ? 'selected' : ''}>Live</option>
+              <option value="Mod Review" ${filters.status === 'Mod Review' ? 'selected' : ''}>Mod Review</option>
+              <option value="Mod Removed" ${filters.status === 'Mod Removed' ? 'selected' : ''}>Mod Removed</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">From Date</span>
+            <input type="date" class="filter-input" value="${filters.dateFrom}" onchange="handleFilterChange('dateFrom', this.value)">
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">To Date</span>
+            <input type="date" class="filter-input" value="${filters.dateTo}" onchange="handleFilterChange('dateTo', this.value)">
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Sort By</span>
+            <select class="filter-select" onchange="handleFilterChange('sortBy', this.value)">
+              <option value="newest" ${filters.sortBy === 'newest' ? 'selected' : ''}>Newest First</option>
+              <option value="oldest" ${filters.sortBy === 'oldest' ? 'selected' : ''}>Oldest First</option>
+              <option value="views" ${filters.sortBy === 'views' ? 'selected' : ''}>Most Views</option>
+            </select>
+          </div>
+          <button class="filter-btn reset" onclick="resetFilters()">Reset</button>
+        </div>
+        
         <div class="posts-header">
-          <div>Post Link</div>
+          <div>Action</div>
+          <div>Views</div>
           <div>Category</div>
           <div>Date</div>
           <div>Status</div>
         </div>
         <div class="posts-list">
-          ${selectedSubreddit.posts.map(post => `
+          ${filteredPosts.length === 0 ? '<div class="loading">No posts match the filters</div>' : filteredPosts.map(post => `
             <div class="post-row">
-              <div>
-                <a href="${post.postUrl}" target="_blank" class="post-link">${post.postUrl || 'No URL'}</a>
-                ${post.views ? `<div class="post-views">${post.views} views</div>` : ''}
-              </div>
+              <a href="${post.postUrl}" target="_blank" class="redirect-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                Open
+              </a>
+              <span class="post-views">${post.views || '-'}</span>
               <span class="badge ${getCategoryClass(post.category)}">${post.category}</span>
               <span class="post-date">${formatDate(post.date)}</span>
-              <span class="badge ${getStatusClass(post.status)}">${post.status}</span>
+              <span class="badge ${getStatusClass(post.status)}">${getStatusLabel(post.status)}</span>
             </div>
           `).join('')}
         </div>
@@ -1088,7 +1930,7 @@
       
       document.getElementById('interactedContent').style.display = tab === 'interacted' ? 'grid' : 'none';
       document.getElementById('nonInteractedContent').style.display = tab === 'non-interacted' ? 'grid' : 'none';
-      document.getElementById('accountFilter').style.display = tab === 'non-interacted' ? 'block' : 'none';
+      document.getElementById('accountDropdown').style.display = tab === 'non-interacted' ? 'block' : 'none';
       
       if (tab === 'non-interacted') {
         renderNonInteracted();
@@ -1097,20 +1939,30 @@
 
     // Update non-interacted count
     function updateNonInteractedCount() {
-      const interactedNames = new Set(processedSubreddits.map(s => s.name.toLowerCase()));
-      const nonInteracted = allSubreddits.filter(s => !interactedNames.has((s.name || '').toLowerCase()));
+      // Get all subreddit names from posts (interacted)
+      const interactedNames = new Set(posts.map(p => extractSubreddit(p.subreddit).toLowerCase()));
+      
+      // Count subreddits that are NOT in posts
+      const nonInteracted = allSubreddits.filter(s => {
+        const subName = s.name.toLowerCase();
+        return !interactedNames.has(subName);
+      });
+      
       document.getElementById('nonInteractedCount').textContent = nonInteracted.length;
     }
 
     // Render non-interacted subreddits
     function renderNonInteracted() {
       const container = document.getElementById('nonInteractedList');
-      const interactedNames = new Set(processedSubreddits.map(s => s.name.toLowerCase()));
       
+      // Get all subreddit names from posts (interacted)
+      const interactedNames = new Set(posts.map(p => extractSubreddit(p.subreddit).toLowerCase()));
+      
+      // Filter subreddits that are NOT in posts and match selected account
       let nonInteracted = allSubreddits.filter(s => {
-        const name = (s.name || '').toLowerCase();
-        const matchesAccount = selectedAccount === 'all' || s.accountId === selectedAccount;
-        return !interactedNames.has(name) && matchesAccount;
+        const subName = s.name.toLowerCase();
+        const matchesAccount = s.accountId === selectedAccount || !s.accountId;
+        return !interactedNames.has(subName) && matchesAccount;
       });
 
       if (nonInteracted.length === 0) {
@@ -1125,22 +1977,11 @@
       }
 
       container.innerHTML = nonInteracted.map(sub => `
-        <div class="non-interacted-card">
-          <div class="card-header">
-            <div class="card-icon">r/</div>
-            <div>
-              <div class="card-name">${sub.name}</div>
-              ${sub.accountId ? `<div class="card-date">${sub.accountId}</div>` : ''}
-            </div>
-          </div>
-        </div>
+        <a href="https://www.reddit.com/r/${sub.name}/" target="_blank" rel="noopener noreferrer" class="non-interacted-card">
+          <div class="card-icon">r/</div>
+          <span class="sub-name">${sub.name}</span>
+        </a>
       `).join('');
-    }
-
-    // Filter by account
-    function filterByAccount() {
-      selectedAccount = document.getElementById('accountFilter').value;
-      renderNonInteracted();
     }
 
     // Modal functions
@@ -1150,6 +1991,105 @@
 
     function closeModal() {
       document.getElementById('addPostModal').classList.remove('active');
+    }
+
+    // Summary Modal functions
+    function openSummaryModal() {
+      const content = document.getElementById('summaryContent');
+      
+      // Calculate summary statistics
+      const totalPosts = posts.length;
+      const livePosts = posts.filter(p => p.status === 'Published').length;
+      const modRemovedPosts = posts.filter(p => p.status === 'Mod Removed').length;
+      const modReviewPosts = posts.filter(p => p.status === 'Mod Review').length;
+      
+      const marketingPosts = posts.filter(p => p.category === 'Marketing' || p.category === 'Semi Marketing');
+      const marketingLive = marketingPosts.filter(p => p.status === 'Published').length;
+      const marketingRemoved = marketingPosts.filter(p => p.status === 'Mod Removed').length;
+      
+      const organicPosts = posts.filter(p => p.category === 'Organic');
+      const organicLive = organicPosts.filter(p => p.status === 'Published').length;
+      const organicRemoved = organicPosts.filter(p => p.status === 'Mod Removed').length;
+      
+      content.innerHTML = `
+        <div class="summary-section">
+          <div class="summary-section-title">Overall Statistics</div>
+          <div class="summary-grid">
+            <div class="summary-card highlight">
+              <div class="summary-value total">${totalPosts}</div>
+              <div class="summary-label">Total Posts</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value live">${livePosts}</div>
+              <div class="summary-label">Live</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value removed">${modRemovedPosts}</div>
+              <div class="summary-label">Mod Removed</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="summary-section">
+          <div class="summary-section-title">Marketing Posts (${marketingPosts.length})</div>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-value marketing">${marketingPosts.length}</div>
+              <div class="summary-label">Total</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value live">${marketingLive}</div>
+              <div class="summary-label">Live</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value removed">${marketingRemoved}</div>
+              <div class="summary-label">Removed</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="summary-section">
+          <div class="summary-section-title">Organic Posts (${organicPosts.length})</div>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-value organic">${organicPosts.length}</div>
+              <div class="summary-label">Total</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value live">${organicLive}</div>
+              <div class="summary-label">Live</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value removed">${organicRemoved}</div>
+              <div class="summary-label">Removed</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="summary-section" style="margin-bottom: 0;">
+          <div class="summary-section-title">Additional Info</div>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-value review">${modReviewPosts}</div>
+              <div class="summary-label">Mod Review</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value total">${processedSubreddits.length}</div>
+              <div class="summary-label">Subreddits</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-value total">${accounts.length}</div>
+              <div class="summary-label">Accounts</div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('summaryModal').classList.add('active');
+    }
+
+    function closeSummaryModal() {
+      document.getElementById('summaryModal').classList.remove('active');
     }
 
     // Add post
@@ -1171,7 +2111,7 @@
             'Date': date,
             'Account ID': accountId,
             'Post Category': category,
-            'Calculation': `https://www.reddit.com/r/${subreddit.replace('/r/', '').replace('r/', '')}`,
+            'Subreddit': `https://www.reddit.com/r/${subreddit.replace('/r/', '').replace('r/', '')}/`,
             'Post URL': postUrl,
             'Status': status
           })
